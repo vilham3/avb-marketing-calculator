@@ -6,6 +6,12 @@ override it. The budget is spread across months, split into evergreen and promo
 dollars, and allocated across Email, Content Bundle, SEO, Google, FB/IG, YouTube
 and OTT based on the evergreen tier.
 
+Each tactic has a checkbox. Unchecking one takes it out of the split: an
+unchecked flat fee (Email, Content Bundle, SEO) isn't charged, and an unchecked
+media tactic's share goes to the checked media tactics in proportion to their
+tier shares. If no checked tactic can take the money at that tier, it shows in
+an Unallocated row. Checking a tactic never adds it below the tier that funds it.
+
 Copied from https://jgezalianavb.github.io/marketing-calc/
 (source: https://github.com/jgezalianavb/marketing-calc, commit `700ade9`).
 
