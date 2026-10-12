@@ -12,6 +12,8 @@ function parseNumber(value) {
 
 function formatInputField(fieldId) {
   const inputField = document.getElementById(fieldId);
+  // Leave empty fields empty: an empty Act Annual Budget falls back to the recommended budget
+  if (inputField.value.trim() === "") return;
   const value = parseNumber(inputField.value); // Parse the input value to a number
   inputField.value = formatNumberWithCommas(value);
 }
@@ -139,18 +141,18 @@ function calculateGoogleBudget() {
     const contentValue = parseNumber(document.getElementById(`content-${["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"][index]}`).textContent);
     let googleBudget = 0;
 
-    if (evergreenValue < 2999) {
+    if (evergreenValue < 3000) {
       googleBudget = evergreenValue;
-    } else if (evergreenValue >= 3000 && evergreenValue <= 5249) {
+    } else if (evergreenValue < 5250) {
       googleBudget = evergreenValue - emailValue;
-    } else if (evergreenValue >= 5250 && evergreenValue <= 14999) {
+    } else if (evergreenValue < 15000) {
       googleBudget = 0.8 * (evergreenValue - (emailValue + contentValue));
     } 
-    else if (evergreenValue >= 15000 && evergreenValue <= 20999) {
+    else if (evergreenValue < 21000) {
       googleBudget = 0.7 * (evergreenValue - (emailValue + contentValue));
     } 
 
-    else if (evergreenValue >= 21000 && evergreenValue <= 49999) {
+    else if (evergreenValue < 50000) {
       googleBudget = 0.7 * (evergreenValue - (emailValue + contentValue + seoValue));
     } 
 
@@ -185,12 +187,12 @@ function calculateFBBudget() {
 
     if (evergreenValue < 5250) {
       fbBudget = 0;
-    } else if (evergreenValue >= 5250 && evergreenValue <= 14999) {
+    } else if (evergreenValue < 15000) {
       fbBudget = 0.1 * (evergreenValue - (emailValue + contentValue));
     
     } 
     
-    else if (evergreenValue >= 15000 && evergreenValue <= 20999) {
+    else if (evergreenValue < 21000) {
       fbBudget = 0.15 * (evergreenValue - (emailValue + contentValue));
     }
     
@@ -220,14 +222,13 @@ function calculateEmailBudget() {
     const evergreenValue = parseNumber(document.getElementById(id).textContent);
     let emailBudget = 0;
 
-    if(evergreenValue < 2999) {
+    if (evergreenValue < 3000) {
       emailBudget = 0;
-    }
-    if (evergreenValue >= 3000 && evergreenValue <= 5249) {
+    } else if (evergreenValue < 5250) {
       emailBudget = 250;
-    } else if (evergreenValue >= 5250 && evergreenValue <= 14999) {
+    } else if (evergreenValue < 15000) {
       emailBudget = 600;
-    } else if (evergreenValue >= 14999) {
+    } else {
       emailBudget = 1500;
     }
 
@@ -282,7 +283,7 @@ function calculateSEOBudget() {
     const evergreenValue = parseNumber(document.getElementById(id).textContent);
     let seoBudget = 0;
 
-    if (evergreenValue >= 21000 && evergreenValue <= 49999) {
+    if (evergreenValue >= 21000 && evergreenValue < 50000) {
       seoBudget = 3000;
     } else if (evergreenValue >= 50000) {
       seoBudget = 5000;
@@ -315,15 +316,15 @@ function calculateYouTubeBudget() {
 
     if (evergreenValue < 5250) {
       ytBudget = 0;
-    } else if (evergreenValue >= 5250 && evergreenValue <= 14999) {
+    } else if (evergreenValue < 15000) {
       ytBudget = 0.1 * (evergreenValue - (emailValue + contentValue));
     
     } 
     
-    else if (evergreenValue >= 15000 && evergreenValue <= 20999) {
+    else if (evergreenValue < 21000) {
       ytBudget = 0.15 * (evergreenValue - (emailValue + contentValue));
     }
-    else if (evergreenValue >= 21000 && evergreenValue <= 49999) {
+    else if (evergreenValue < 50000) {
       ytBudget = 0.1 * (evergreenValue - (emailValue + contentValue + seoValue));
     }
     
@@ -453,18 +454,6 @@ updateMonthlyBudget = (function (originalFunction) {
 document
   .getElementById("retailRevenue")
   .addEventListener("blur", () => formatInputField("retailRevenue"));
-document
-  .getElementById("categoryRevenue1")
-  .addEventListener("blur", () => formatInputField("categoryRevenue1"));
-document
-  .getElementById("categoryRevenue2")
-  .addEventListener("blur", () => formatInputField("categoryRevenue2"));
-document
-  .getElementById("mrktgRevenue1")
-  .addEventListener("blur", () => formatInputField("mrktgRevenue1"));
-document
-  .getElementById("mrktgRevenue2")
-  .addEventListener("blur", () => formatInputField("mrktgRevenue2"));
 document
   .getElementById("actAnnualBudget")
   .addEventListener("blur", () => formatInputField("actAnnualBudget"));
