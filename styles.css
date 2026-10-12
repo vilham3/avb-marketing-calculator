@@ -1,0 +1,143 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #333;
+}
+.budget-table {
+    width: 300px;
+    border-collapse: collapse;
+    color: white;
+    margin: 20px auto;
+}
+.budget-table th,
+.budget-table td {
+    padding: 8px;
+    text-align: center;
+    border: 1px solid #333;
+}
+.key-cell {
+    background-color: #555555;
+    font-weight: bold;
+    text-align: left;
+    padding-left: 10px;
+}
+.budget-table .category {
+    background-color: #e4007c;
+    color: black;
+}
+.budget-table .highlight {
+    background-color: #ccffcc;
+    color: black;
+    font-weight: bold;
+}
+input[type="text"] {
+    width: 100%;
+    padding: 4px;
+    box-sizing: border-box;
+    text-align: center;
+    background-color: #ffffff;
+    color: #333333;
+    border: 1px solid #555;
+    font-weight: bold;
+}
+
+.breakdown-table {
+    width: 100%;
+    border-collapse: collapse;
+    color: white;
+    margin-top: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.breakdown-table th,
+.breakdown-table td {
+    padding: 8px;
+    text-align: center;
+    border: 1px solid #333;
+    font-size: 14px;
+}
+
+.breakdown-table th {
+    background-color: #2f3e50;
+    color: white;
+    font-weight: bold;
+}
+
+.breakdown-table td {
+    background-color: gray;
+    color: white;
+    font-weight: bold;
+}
+
+.breakdown-table tr:nth-child(2) td {
+    background-color: #99aab5;
+    color: white;
+    font-weight: bold;
+}
+
+.breakdown-table tr:nth-child(3) td {
+    background-color: #d0d8e2;
+    color: black;
+    font-weight: bold;
+}
+
+/* Promotion Section Table */
+.promotion-section {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .promotion-table {
+    border-collapse: collapse;
+    width: 70%;
+    margin: auto;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+  }
+  
+  .promotion-table th,
+  .promotion-table td {
+    border: 1px solid #ddd;
+    text-align: center;
+    padding: 8px;
+  }
+  
+  .promotion-table th {
+    background-color: #2c3e50;
+    color: white;
+    font-weight: bold;
+  }
+  
+  .promotion-table td {
+    background-color: #ecf0f1;
+    color: #2c3e50;
+  }
+  
+  .promotion-table tr:nth-child(even) td {
+    background-color: #f9f9f9;
+  }
+  
+  .promotion-table tr:hover td {
+    background-color: #d5dfe5;
+  }
+  
+  .promotion-table td#promo-total {
+    background-color: #27ae60;
+    color: white;
+    font-weight: bold;
+  }
+  
+  .promotion-table th:first-child,
+  .promotion-table td:first-child {
+    text-align: left;
+    padding-left: 10px;
+  }
+  
+  .promotion-section h2 {
+    text-align: center;
+    font-family: Arial, sans-serif;
+    font-size: 18px;
+    color: #2c3e50;
+    margin-bottom: 10px;
+  }
+  
