@@ -31,7 +31,7 @@ function calculateBudget() {
   // const budget2 = retailRevenue * categoryRevenue2 * mrktgRevenue2;
 
   document.getElementById("recAnnualBudget").textContent = `$${formatNumberWithCommas(recAnnualBudget)}`;
-  document.getElementById("actAnnualBudget").placeholder = `$${formatNumberWithCommas(recAnnualBudget)}`;
+  document.getElementById("actAnnualBudget").placeholder = formatNumberWithCommas(recAnnualBudget);
 
   updateMonthlyBudget();
 }
@@ -457,3 +457,6 @@ document
 document
   .getElementById("actAnnualBudget")
   .addEventListener("blur", () => formatInputField("actAnnualBudget"));
+
+// Fill every cell with formatted zeros on load
+calculateBudget();
