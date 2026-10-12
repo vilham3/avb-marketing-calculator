@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css" />
+  <script src="./helpers.js" defer></script>
+  <title>Editable Marketing Budget Table</title>
+</head>
+
+<body>
+
+  <table class="budget-table">
+    <tr>
+      <td colspan="3" class="key-cell">Member:</td>
+    </tr>
+    <tr>
+      <td class="key-cell">Retail Revenue</td>
+      <td colspan="2" class="category">
+        <input type="text" id="retailRevenue" value="" oninput="calculateBudget()" />
+      </td>
+    </tr>
+    <tr>
+      <td class="key-cell">Rec Annual Budget</td>
+      <td colspan="2" class="highlight" id="recAnnualBudget">$0</td>
+    </tr>
+    <tr>
+      <td class="key-cell">Act Annual Budget</td>
+      <td colspan="2" class="category">
+        <input type="text" id="actAnnualBudget" placeholder="$0" oninput="updateMonthlyBudget()" />
+      </td>
+    </tr>
+  </table>
+
+  <table class="breakdown-table">
+    <!-- Header Row 1 -->
+    <tr>
+      <th>Month</th>
+      <td></td>
+      <th>January</th>
+      <th>February</th>
+      <th>March</th>
+      <th>April</th>
+      <th>May</th>
+      <th>June</th>
+      <th>July</th>
+      <th>August</th>
+      <th>September</th>
+      <th>October</th>
+      <th>November</th>
+      <th>December</th>
+      <th>Total</th>
+    </tr>
+
+    <!-- Header Row 2 -->
+    <tr>
+      <th>% of Budget/Sales</th>
+      <td></td>
+      <td>7%</td>
+      <td>8%</td>
+      <td>7%</td>
+      <td>7%</td>
+      <td>9%</td>
+      <td>9%</td>
+      <td>10%</td>
+      <td>8.5%</td>
+      <td>8.5%</td>
+      <td>7%</td>
+      <td>12%</td>
+      <td>7%</td>
+      <td>100%</td>
+    </tr>
+
+    <tr>
+      <th>Promo Budget</th>
+      <td></td>
+      <td>$0</td>
+      <td id="pres-day">$0</td>
+      <td>$0</td>
+      <td>$0</td>
+      <td id="mem-day">$0</td>
+      <td id ="june-promo">$0</td>
+      <td id="july-4">$0</td>
+      <td id = "aug-promo">$0</td>
+      <td id="labor-day">$0</td>
+      <td>$0</td>
+      <td id="black-friday">$0</td>
+      <td>$0</td>
+      <td id="promo-total">$0</td>
+    </tr>
+
+
+    <!-- Monthly Budget Row (Dynamic Calculation) -->
+    <tr>
+      <th>Monthly Budget</th>
+      <td></td>
+      <td id="budget-jan">$0</td>
+      <td id="budget-feb">$0</td>
+      <td id="budget-mar">$0</td>
+      <td id="budget-apr">$0</td>
+      <td id="budget-may">$0</td>
+      <td id="budget-jun">$0</td>
+      <td id="budget-jul">$0</td>
+      <td id="budget-aug">$0</td>
+      <td id="budget-sep">$0</td>
+      <td id="budget-oct">$0</td>
+      <td id="budget-nov">$0</td>
+      <td id="budget-dec">$0</td>
+      <td id="budget-total">$0</td>
+    </tr>
+
+    <tr>
+      <th>Evergreen Budget</th>
+      <td></td>
+      <td id="evergreen-jan">$0</td>
+      <td id="evergreen-feb">$0</td>
+      <td id="evergreen-mar">$0</td>
+      <td id="evergreen-apr">$0</td>
+      <td id="evergreen-may">$0</td>
+      <td id="evergreen-jun">$0</td>
+      <td id="evergreen-jul">$0</td>
+      <td id="evergreen-aug">$0</td>
+      <td id="evergreen-sep">$0</td>
+      <td id="evergreen-oct">$0</td>
+      <td id="evergreen-nov">$0</td>
+      <td id="evergreen-dec">$0</td>
+      <td id="evergreen-total">$0</td>
+    </tr>
+
+    <tr>
+      <th>Email</th>
+      <td id="email-percentage"></td>
+      <td id="email-jan">$0</td>
+      <td id="email-feb">$0</td>
+      <td id="email-mar">$0</td>
+      <td id="email-apr">$0</td>
+      <td id="email-may">$0</td>
+      <td id="email-jun">$0</td>
+      <td id="email-jul">$0</td>
+      <td id="email-aug">$0</td>
+      <td id="email-sep">$0</td>
+      <td id="email-oct">$0</td>
+      <td id="email-nov">$0</td>
+      <td id="email-dec">$0</td>
+      <td id="email-total">$0</td>
+    </tr>
+
+    <tr>
+      <th>Content Bundle</th>
+      <td id="content-percentage"></td>
+      <td id="content-jan">$0</td>
+      <td id="content-feb">$0</td>
+      <td id="content-mar">$0</td>
+      <td id="content-apr">$0</td>
+      <td id="content-may">$0</td>
+      <td id="content-jun">$0</td>
+      <td id="content-jul">$0</td>
+      <td id="content-aug">$0</td>
+      <td id="content-sep">$0</td>
+      <td id="content-oct">$0</td>
+      <td id="content-nov">$0</td>
+      <td id="content-dec">$0</td>
+      <td id="content-total">$0</td>
+    </tr>
+
+    <tr>
+      <th>SEO</th>
+      <td id="seo-percentage"></td>
+      <td id="seo-jan">$0</td>
+      <td id="seo-feb">$0</td>
+      <td id="seo-mar">$0</td>
+      <td id="seo-apr">$0</td>
+      <td id="seo-may">$0</td>
+      <td id="seo-jun">$0</td>
+      <td id="seo-jul">$0</td>
+      <td id="seo-aug">$0</td>
+      <td id="seo-sep">$0</td>
+      <td id="seo-oct">$0</td>
+      <td id="seo-nov">$0</td>
+      <td id="seo-dec">$0</td>
+      <td id="seo-total">$0</td>
+    </tr>
+
+    <tr>
+      <th>Google</th>
+      <td id="google-percentage"></td>
+      <td id="google-jan">$0</td>
+      <td id="google-feb">$0</td>
+      <td id="google-mar">$0</td>
+      <td id="google-apr">$0</td>
+      <td id="google-may">$0</td>
+      <td id="google-jun">$0</td>
+      <td id="google-jul">$0</td>
+      <td id="google-aug">$0</td>
+      <td id="google-sep">$0</td>
+      <td id="google-oct">$0</td>
+      <td id="google-nov">$0</td>
+      <td id="google-dec">$0</td>
+      <td id="google-total">$0</td>
+    </tr>
+
+    <tr>
+      <th>FB/IG</th>
+      <td id="fb-percentage"></td>
+      <td id="fb-jan">$0</td>
+      <td id="fb-feb">$0</td>
+      <td id="fb-mar">$0</td>
+      <td id="fb-apr">$0</td>
+      <td id="fb-may">$0</td>
+      <td id="fb-jun">$0</td>
+      <td id="fb-jul">$0</td>
+      <td id="fb-aug">$0</td>
+      <td id="fb-sep">$0</td>
+      <td id="fb-oct">$0</td>
+      <td id="fb-nov">$0</td>
+      <td id="fb-dec">$0</td>
+      <td id="fb-total">$0</td>
+    </tr>
+
+    <tr>
+      <th>YouTube</th>
+      <td id="youtube-percentage"></td>
+      <td id="youtube-jan">$0</td>
+      <td id="youtube-feb">$0</td>
+      <td id="youtube-mar">$0</td>
+      <td id="youtube-apr">$0</td>
+      <td id="youtube-may">$0</td>
+      <td id="youtube-jun">$0</td>
+      <td id="youtube-jul">$0</td>
+      <td id="youtube-aug">$0</td>
+      <td id="youtube-sep">$0</td>
+      <td id="youtube-oct">$0</td>
+      <td id="youtube-nov">$0</td>
+      <td id="youtube-dec">$0</td>
+      <td id="youtube-total">$0</td>
+    </tr>
+
+
+    <tr>
+      <th>OTT</th>
+      <td id="ott-percentage"></td>
+      <td id="ott-jan">$0</td>
+      <td id="ott-feb">$0</td>
+      <td id="ott-mar">$0</td>
+      <td id="ott-apr">$0</td>
+      <td id="ott-may">$0</td>
+      <td id="ott-jun">$0</td>
+      <td id="ott-jul">$0</td>
+      <td id="ott-aug">$0</td>
+      <td id="ott-sep">$0</td>
+      <td id="ott-oct">$0</td>
+      <td id="ott-nov">$0</td>
+      <td id="ott-dec">$0</td>
+      <td id="ott-total">$0</td>
+    </tr>
+
+    <tr>
+      <th style="visibility:hidden"></th>
+      <td style="visibility:hidden"></td>
+      <td style="visibility:hidden"></td>
+      <td>Pres Day</td>
+      <td style="visibility:hidden"></td>
+      <td style="visibility:hidden"></td>
+      <td>Memorial Day</td>
+      <td style="visibility:hidden"></td>
+      <td>4th of July</td>
+      <td style="visibility:hidden"></td>
+      <td>Labor Day</td>
+      <td style="visibility:hidden"></td>
+      <td >Black Friday</td>
+      <td style="visibility:hidden"></td>
+      <td style="visibility:hidden"></td>
+    </tr>
+
+
+  </table>
+
+
+
+
+
+
+</body>
+
+</html>
