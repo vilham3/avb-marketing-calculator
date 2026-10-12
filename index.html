@@ -4,282 +4,280 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <title>Marketing Budget Calculator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mulish:wght@400;600;700;800&display=swap">
   <link rel="stylesheet" href="styles.css" />
   <script src="./helpers.js" defer></script>
-  <title>Editable Marketing Budget Table</title>
 </head>
 
 <body>
 
-  <table class="budget-table">
-    <tr>
-      <td colspan="3" class="key-cell">Member:</td>
-    </tr>
-    <tr>
-      <td class="key-cell">Retail Revenue</td>
-      <td colspan="2" class="category">
-        <input type="text" id="retailRevenue" value="" oninput="calculateBudget()" />
-      </td>
-    </tr>
-    <tr>
-      <td class="key-cell">Rec Annual Budget</td>
-      <td colspan="2" class="highlight" id="recAnnualBudget">$0</td>
-    </tr>
-    <tr>
-      <td class="key-cell">Act Annual Budget</td>
-      <td colspan="2" class="category">
-        <input type="text" id="actAnnualBudget" placeholder="$0" oninput="updateMonthlyBudget()" />
-      </td>
-    </tr>
-  </table>
+  <header class="app-bar">
+    <div class="app-bar-inner">
+      <img class="logo" src="assets/avb-marketing-logo.png" alt="AVB Marketing" width="180" height="32">
+      <span class="app-title">Marketing Budget Calculator</span>
+    </div>
+  </header>
 
-  <table class="breakdown-table">
-    <!-- Header Row 1 -->
-    <tr>
-      <th>Month</th>
-      <td></td>
-      <th>January</th>
-      <th>February</th>
-      <th>March</th>
-      <th>April</th>
-      <th>May</th>
-      <th>June</th>
-      <th>July</th>
-      <th>August</th>
-      <th>September</th>
-      <th>October</th>
-      <th>November</th>
-      <th>December</th>
-      <th>Total</th>
-    </tr>
+  <main class="page">
 
-    <!-- Header Row 2 -->
-    <tr>
-      <th>% of Budget/Sales</th>
-      <td></td>
-      <td>7%</td>
-      <td>8%</td>
-      <td>7%</td>
-      <td>7%</td>
-      <td>9%</td>
-      <td>9%</td>
-      <td>10%</td>
-      <td>8.5%</td>
-      <td>8.5%</td>
-      <td>7%</td>
-      <td>12%</td>
-      <td>7%</td>
-      <td>100%</td>
-    </tr>
+    <section class="budget-inputs" aria-label="Budget inputs">
+      <div class="field-card member-card">
+        <label class="field-label" for="memberName">Member</label>
+        <input type="text" id="memberName" class="text-input" placeholder="Member name" autocomplete="off" />
+      </div>
 
-    <tr>
-      <th>Promo Budget</th>
-      <td></td>
-      <td>$0</td>
-      <td id="pres-day">$0</td>
-      <td>$0</td>
-      <td>$0</td>
-      <td id="mem-day">$0</td>
-      <td id ="june-promo">$0</td>
-      <td id="july-4">$0</td>
-      <td id = "aug-promo">$0</td>
-      <td id="labor-day">$0</td>
-      <td>$0</td>
-      <td id="black-friday">$0</td>
-      <td>$0</td>
-      <td id="promo-total">$0</td>
-    </tr>
+      <div class="field-card">
+        <label class="field-label" for="retailRevenue">Retail Revenue</label>
+        <div class="money-input">
+          <span class="prefix" aria-hidden="true">$</span>
+          <input type="text" id="retailRevenue" value="" inputmode="decimal" placeholder="0.00" autocomplete="off" oninput="calculateBudget()" />
+        </div>
+        <p class="field-hint">Annual retail sales</p>
+      </div>
 
+      <div class="field-card highlight-card">
+        <span class="field-label">Rec Annual Budget</span>
+        <output class="big-number" id="recAnnualBudget">$0</output>
+        <p class="field-hint">3% of retail revenue</p>
+      </div>
 
-    <!-- Monthly Budget Row (Dynamic Calculation) -->
-    <tr>
-      <th>Monthly Budget</th>
-      <td></td>
-      <td id="budget-jan">$0</td>
-      <td id="budget-feb">$0</td>
-      <td id="budget-mar">$0</td>
-      <td id="budget-apr">$0</td>
-      <td id="budget-may">$0</td>
-      <td id="budget-jun">$0</td>
-      <td id="budget-jul">$0</td>
-      <td id="budget-aug">$0</td>
-      <td id="budget-sep">$0</td>
-      <td id="budget-oct">$0</td>
-      <td id="budget-nov">$0</td>
-      <td id="budget-dec">$0</td>
-      <td id="budget-total">$0</td>
-    </tr>
+      <div class="field-card">
+        <label class="field-label" for="actAnnualBudget">Act Annual Budget</label>
+        <div class="money-input">
+          <span class="prefix" aria-hidden="true">$</span>
+          <input type="text" id="actAnnualBudget" inputmode="decimal" placeholder="0.00" autocomplete="off" oninput="updateMonthlyBudget()" />
+        </div>
+        <p class="field-hint">Leave blank to use the recommended budget</p>
+      </div>
+    </section>
 
-    <tr>
-      <th>Evergreen Budget</th>
-      <td></td>
-      <td id="evergreen-jan">$0</td>
-      <td id="evergreen-feb">$0</td>
-      <td id="evergreen-mar">$0</td>
-      <td id="evergreen-apr">$0</td>
-      <td id="evergreen-may">$0</td>
-      <td id="evergreen-jun">$0</td>
-      <td id="evergreen-jul">$0</td>
-      <td id="evergreen-aug">$0</td>
-      <td id="evergreen-sep">$0</td>
-      <td id="evergreen-oct">$0</td>
-      <td id="evergreen-nov">$0</td>
-      <td id="evergreen-dec">$0</td>
-      <td id="evergreen-total">$0</td>
-    </tr>
+    <section class="breakdown-card" aria-labelledby="breakdown-title">
+      <div class="card-header">
+        <h2 id="breakdown-title">Monthly breakdown</h2>
+        <p class="card-subtitle">Evergreen is the smallest monthly budget, spent every month. Anything above it goes to that month's promotion.</p>
+      </div>
+      <div class="table-scroll" tabindex="0" aria-label="Monthly breakdown table, scrolls horizontally">
+      <table class="breakdown-table">
+        <thead>
+        <tr>
+          <th scope="col" class="corner">Month</th>
+          <th scope="col" class="share" title="Share of the evergreen budget">% Evergreen</th>
+          <th scope="col"><span class="month">January</span></th>
+          <th scope="col"><span class="month">February</span><span class="holiday">Pres Day</span></th>
+          <th scope="col"><span class="month">March</span></th>
+          <th scope="col"><span class="month">April</span></th>
+          <th scope="col"><span class="month">May</span><span class="holiday">Memorial Day</span></th>
+          <th scope="col"><span class="month">June</span></th>
+          <th scope="col"><span class="month">July</span><span class="holiday">4th of July</span></th>
+          <th scope="col"><span class="month">August</span></th>
+          <th scope="col"><span class="month">September</span><span class="holiday">Labor Day</span></th>
+          <th scope="col"><span class="month">October</span></th>
+          <th scope="col"><span class="month">November</span><span class="holiday">Black Friday</span></th>
+          <th scope="col"><span class="month">December</span></th>
+          <th scope="col" class="total">Total</th>
+        </tr>
+        </thead>
+        <tbody class="plan">
+        <tr class="row-pct">
+          <th scope="row">% of Budget/Sales</th>
+          <td class="share"></td>
+          <td>7%</td>
+          <td>8%</td>
+          <td>7%</td>
+          <td>7%</td>
+          <td>9%</td>
+          <td>9%</td>
+          <td>10%</td>
+          <td>8.5%</td>
+          <td>8.5%</td>
+          <td>7%</td>
+          <td>12%</td>
+          <td>7%</td>
+          <td class="total">100%</td>
+        </tr>
+        <tr class="row-promo">
+          <th scope="row">Promo Budget</th>
+          <td class="share"></td>
+          <td>$0.00</td>
+          <td id="pres-day">$0</td>
+          <td>$0.00</td>
+          <td>$0.00</td>
+          <td id="mem-day">$0</td>
+          <td id="june-promo">$0</td>
+          <td id="july-4">$0</td>
+          <td id="aug-promo">$0</td>
+          <td id="labor-day">$0</td>
+          <td>$0.00</td>
+          <td id="black-friday">$0</td>
+          <td>$0.00</td>
+          <td class="total" id="promo-total">$0</td>
+        </tr>
+        <tr class="row-monthly">
+          <th scope="row">Monthly Budget</th>
+          <td class="share"></td>
+          <td id="budget-jan">$0</td>
+          <td id="budget-feb">$0</td>
+          <td id="budget-mar">$0</td>
+          <td id="budget-apr">$0</td>
+          <td id="budget-may">$0</td>
+          <td id="budget-jun">$0</td>
+          <td id="budget-jul">$0</td>
+          <td id="budget-aug">$0</td>
+          <td id="budget-sep">$0</td>
+          <td id="budget-oct">$0</td>
+          <td id="budget-nov">$0</td>
+          <td id="budget-dec">$0</td>
+          <td class="total" id="budget-total">$0</td>
+        </tr>
+        <tr class="row-evergreen">
+          <th scope="row">Evergreen Budget</th>
+          <td class="share"></td>
+          <td id="evergreen-jan">$0</td>
+          <td id="evergreen-feb">$0</td>
+          <td id="evergreen-mar">$0</td>
+          <td id="evergreen-apr">$0</td>
+          <td id="evergreen-may">$0</td>
+          <td id="evergreen-jun">$0</td>
+          <td id="evergreen-jul">$0</td>
+          <td id="evergreen-aug">$0</td>
+          <td id="evergreen-sep">$0</td>
+          <td id="evergreen-oct">$0</td>
+          <td id="evergreen-nov">$0</td>
+          <td id="evergreen-dec">$0</td>
+          <td class="total" id="evergreen-total">$0</td>
+        </tr>
+        </tbody>
+        <tbody class="channels">
+        <tr class="group-label"><th scope="rowgroup" colspan="15">Evergreen by channel</th></tr>
+        <tr class="row-channel">
+          <th scope="row">Email</th>
+          <td class="share" id="email-percentage"></td>
+          <td id="email-jan">$0</td>
+          <td id="email-feb">$0</td>
+          <td id="email-mar">$0</td>
+          <td id="email-apr">$0</td>
+          <td id="email-may">$0</td>
+          <td id="email-jun">$0</td>
+          <td id="email-jul">$0</td>
+          <td id="email-aug">$0</td>
+          <td id="email-sep">$0</td>
+          <td id="email-oct">$0</td>
+          <td id="email-nov">$0</td>
+          <td id="email-dec">$0</td>
+          <td class="total" id="email-total">$0</td>
+        </tr>
+        <tr class="row-channel">
+          <th scope="row">Content Bundle</th>
+          <td class="share" id="content-percentage"></td>
+          <td id="content-jan">$0</td>
+          <td id="content-feb">$0</td>
+          <td id="content-mar">$0</td>
+          <td id="content-apr">$0</td>
+          <td id="content-may">$0</td>
+          <td id="content-jun">$0</td>
+          <td id="content-jul">$0</td>
+          <td id="content-aug">$0</td>
+          <td id="content-sep">$0</td>
+          <td id="content-oct">$0</td>
+          <td id="content-nov">$0</td>
+          <td id="content-dec">$0</td>
+          <td class="total" id="content-total">$0</td>
+        </tr>
+        <tr class="row-channel">
+          <th scope="row">SEO</th>
+          <td class="share" id="seo-percentage"></td>
+          <td id="seo-jan">$0</td>
+          <td id="seo-feb">$0</td>
+          <td id="seo-mar">$0</td>
+          <td id="seo-apr">$0</td>
+          <td id="seo-may">$0</td>
+          <td id="seo-jun">$0</td>
+          <td id="seo-jul">$0</td>
+          <td id="seo-aug">$0</td>
+          <td id="seo-sep">$0</td>
+          <td id="seo-oct">$0</td>
+          <td id="seo-nov">$0</td>
+          <td id="seo-dec">$0</td>
+          <td class="total" id="seo-total">$0</td>
+        </tr>
+        <tr class="row-channel">
+          <th scope="row">Google</th>
+          <td class="share" id="google-percentage"></td>
+          <td id="google-jan">$0</td>
+          <td id="google-feb">$0</td>
+          <td id="google-mar">$0</td>
+          <td id="google-apr">$0</td>
+          <td id="google-may">$0</td>
+          <td id="google-jun">$0</td>
+          <td id="google-jul">$0</td>
+          <td id="google-aug">$0</td>
+          <td id="google-sep">$0</td>
+          <td id="google-oct">$0</td>
+          <td id="google-nov">$0</td>
+          <td id="google-dec">$0</td>
+          <td class="total" id="google-total">$0</td>
+        </tr>
+        <tr class="row-channel">
+          <th scope="row">FB/IG</th>
+          <td class="share" id="fb-percentage"></td>
+          <td id="fb-jan">$0</td>
+          <td id="fb-feb">$0</td>
+          <td id="fb-mar">$0</td>
+          <td id="fb-apr">$0</td>
+          <td id="fb-may">$0</td>
+          <td id="fb-jun">$0</td>
+          <td id="fb-jul">$0</td>
+          <td id="fb-aug">$0</td>
+          <td id="fb-sep">$0</td>
+          <td id="fb-oct">$0</td>
+          <td id="fb-nov">$0</td>
+          <td id="fb-dec">$0</td>
+          <td class="total" id="fb-total">$0</td>
+        </tr>
+        <tr class="row-channel">
+          <th scope="row">YouTube</th>
+          <td class="share" id="youtube-percentage"></td>
+          <td id="youtube-jan">$0</td>
+          <td id="youtube-feb">$0</td>
+          <td id="youtube-mar">$0</td>
+          <td id="youtube-apr">$0</td>
+          <td id="youtube-may">$0</td>
+          <td id="youtube-jun">$0</td>
+          <td id="youtube-jul">$0</td>
+          <td id="youtube-aug">$0</td>
+          <td id="youtube-sep">$0</td>
+          <td id="youtube-oct">$0</td>
+          <td id="youtube-nov">$0</td>
+          <td id="youtube-dec">$0</td>
+          <td class="total" id="youtube-total">$0</td>
+        </tr>
+        <tr class="row-channel">
+          <th scope="row">OTT</th>
+          <td class="share" id="ott-percentage"></td>
+          <td id="ott-jan">$0</td>
+          <td id="ott-feb">$0</td>
+          <td id="ott-mar">$0</td>
+          <td id="ott-apr">$0</td>
+          <td id="ott-may">$0</td>
+          <td id="ott-jun">$0</td>
+          <td id="ott-jul">$0</td>
+          <td id="ott-aug">$0</td>
+          <td id="ott-sep">$0</td>
+          <td id="ott-oct">$0</td>
+          <td id="ott-nov">$0</td>
+          <td id="ott-dec">$0</td>
+          <td class="total" id="ott-total">$0</td>
+        </tr>
+        </tbody>
+      </table>
+      </div>
+    </section>
 
-    <tr>
-      <th>Email</th>
-      <td id="email-percentage"></td>
-      <td id="email-jan">$0</td>
-      <td id="email-feb">$0</td>
-      <td id="email-mar">$0</td>
-      <td id="email-apr">$0</td>
-      <td id="email-may">$0</td>
-      <td id="email-jun">$0</td>
-      <td id="email-jul">$0</td>
-      <td id="email-aug">$0</td>
-      <td id="email-sep">$0</td>
-      <td id="email-oct">$0</td>
-      <td id="email-nov">$0</td>
-      <td id="email-dec">$0</td>
-      <td id="email-total">$0</td>
-    </tr>
-
-    <tr>
-      <th>Content Bundle</th>
-      <td id="content-percentage"></td>
-      <td id="content-jan">$0</td>
-      <td id="content-feb">$0</td>
-      <td id="content-mar">$0</td>
-      <td id="content-apr">$0</td>
-      <td id="content-may">$0</td>
-      <td id="content-jun">$0</td>
-      <td id="content-jul">$0</td>
-      <td id="content-aug">$0</td>
-      <td id="content-sep">$0</td>
-      <td id="content-oct">$0</td>
-      <td id="content-nov">$0</td>
-      <td id="content-dec">$0</td>
-      <td id="content-total">$0</td>
-    </tr>
-
-    <tr>
-      <th>SEO</th>
-      <td id="seo-percentage"></td>
-      <td id="seo-jan">$0</td>
-      <td id="seo-feb">$0</td>
-      <td id="seo-mar">$0</td>
-      <td id="seo-apr">$0</td>
-      <td id="seo-may">$0</td>
-      <td id="seo-jun">$0</td>
-      <td id="seo-jul">$0</td>
-      <td id="seo-aug">$0</td>
-      <td id="seo-sep">$0</td>
-      <td id="seo-oct">$0</td>
-      <td id="seo-nov">$0</td>
-      <td id="seo-dec">$0</td>
-      <td id="seo-total">$0</td>
-    </tr>
-
-    <tr>
-      <th>Google</th>
-      <td id="google-percentage"></td>
-      <td id="google-jan">$0</td>
-      <td id="google-feb">$0</td>
-      <td id="google-mar">$0</td>
-      <td id="google-apr">$0</td>
-      <td id="google-may">$0</td>
-      <td id="google-jun">$0</td>
-      <td id="google-jul">$0</td>
-      <td id="google-aug">$0</td>
-      <td id="google-sep">$0</td>
-      <td id="google-oct">$0</td>
-      <td id="google-nov">$0</td>
-      <td id="google-dec">$0</td>
-      <td id="google-total">$0</td>
-    </tr>
-
-    <tr>
-      <th>FB/IG</th>
-      <td id="fb-percentage"></td>
-      <td id="fb-jan">$0</td>
-      <td id="fb-feb">$0</td>
-      <td id="fb-mar">$0</td>
-      <td id="fb-apr">$0</td>
-      <td id="fb-may">$0</td>
-      <td id="fb-jun">$0</td>
-      <td id="fb-jul">$0</td>
-      <td id="fb-aug">$0</td>
-      <td id="fb-sep">$0</td>
-      <td id="fb-oct">$0</td>
-      <td id="fb-nov">$0</td>
-      <td id="fb-dec">$0</td>
-      <td id="fb-total">$0</td>
-    </tr>
-
-    <tr>
-      <th>YouTube</th>
-      <td id="youtube-percentage"></td>
-      <td id="youtube-jan">$0</td>
-      <td id="youtube-feb">$0</td>
-      <td id="youtube-mar">$0</td>
-      <td id="youtube-apr">$0</td>
-      <td id="youtube-may">$0</td>
-      <td id="youtube-jun">$0</td>
-      <td id="youtube-jul">$0</td>
-      <td id="youtube-aug">$0</td>
-      <td id="youtube-sep">$0</td>
-      <td id="youtube-oct">$0</td>
-      <td id="youtube-nov">$0</td>
-      <td id="youtube-dec">$0</td>
-      <td id="youtube-total">$0</td>
-    </tr>
-
-
-    <tr>
-      <th>OTT</th>
-      <td id="ott-percentage"></td>
-      <td id="ott-jan">$0</td>
-      <td id="ott-feb">$0</td>
-      <td id="ott-mar">$0</td>
-      <td id="ott-apr">$0</td>
-      <td id="ott-may">$0</td>
-      <td id="ott-jun">$0</td>
-      <td id="ott-jul">$0</td>
-      <td id="ott-aug">$0</td>
-      <td id="ott-sep">$0</td>
-      <td id="ott-oct">$0</td>
-      <td id="ott-nov">$0</td>
-      <td id="ott-dec">$0</td>
-      <td id="ott-total">$0</td>
-    </tr>
-
-    <tr>
-      <th style="visibility:hidden"></th>
-      <td style="visibility:hidden"></td>
-      <td style="visibility:hidden"></td>
-      <td>Pres Day</td>
-      <td style="visibility:hidden"></td>
-      <td style="visibility:hidden"></td>
-      <td>Memorial Day</td>
-      <td style="visibility:hidden"></td>
-      <td>4th of July</td>
-      <td style="visibility:hidden"></td>
-      <td>Labor Day</td>
-      <td style="visibility:hidden"></td>
-      <td >Black Friday</td>
-      <td style="visibility:hidden"></td>
-      <td style="visibility:hidden"></td>
-    </tr>
-
-
-  </table>
-
-
-
-
-
+  </main>
 
 </body>
 

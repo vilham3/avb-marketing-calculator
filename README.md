@@ -13,7 +13,8 @@ Copied from https://jgezalianavb.github.io/marketing-calc/
 
 - `index.html` – page markup (input table and monthly breakdown table)
 - `helpers.js` – all budget calculations
-- `styles.css` – styling
+- `styles.css` – styling (AVB Marketing brand colors and the Mulish font, with light and dark themes)
+- `assets/avb-marketing-logo.png` – AVB Marketing logo shown in the header
 
 ## Running
 
