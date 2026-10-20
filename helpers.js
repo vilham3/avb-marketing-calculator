@@ -79,13 +79,7 @@ function updateMonthlyBudget() {
   ).textContent = `$${formatNumberWithCommas(totalBudget)}`;
 
   calculateEvergreenBudget();
-  calculateEmailBudget();
-  calculateContentBundleBudget();
-  calculateSEOBudget();
-  calculateGoogleBudget();
-  calculateFBBudget();
-  calculateYouTubeBudget()
-  calculateOTTBudget();
+  calculateChannelBudgets();
   calculateBudgetPercentages();
   calculatePromoBudget();
 }
@@ -125,252 +119,77 @@ function calculateEvergreenBudget() {
   ).textContent = `$${formatNumberWithCommas(totalEvergreen)}`;
 }
 
-function calculateGoogleBudget() {
-  const monthlyIds = [
-    "evergreen-jan", "evergreen-feb", "evergreen-mar", "evergreen-apr",
-    "evergreen-may", "evergreen-jun", "evergreen-jul", "evergreen-aug",
-    "evergreen-sep", "evergreen-oct", "evergreen-nov", "evergreen-dec"
-  ];
+const MONTHS = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
 
-  let totalGoogleBudget = 0;
+// Tactics paid as a flat monthly fee, taken off the top of the evergreen budget
+const FEE_TACTICS = ["email", "content", "seo"];
+// Tactics that split whatever evergreen budget is left after the fees
+const MEDIA_TACTICS = ["google", "fb", "youtube", "ott"];
 
-  monthlyIds.forEach((id, index) => {
-    const evergreenValue = parseNumber(document.getElementById(id).textContent);
-    const emailValue = parseNumber(document.getElementById(`email-${["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"][index]}`).textContent);
-    const seoValue = parseNumber(document.getElementById(`seo-${["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"][index]}`).textContent);
-    const contentValue = parseNumber(document.getElementById(`content-${["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"][index]}`).textContent);
-    let googleBudget = 0;
+// Evergreen tiers, lowest first. A month uses the last tier whose `min` its evergreen budget reaches.
+const TIERS = [
+  { min: 0,     fees: { email: 0,    content: 0,   seo: 0    }, shares: { google: 1,   fb: 0,    youtube: 0,    ott: 0   } },
+  { min: 3000,  fees: { email: 250,  content: 0,   seo: 0    }, shares: { google: 1,   fb: 0,    youtube: 0,    ott: 0   } },
+  { min: 5250,  fees: { email: 600,  content: 200, seo: 0    }, shares: { google: 0.8, fb: 0.1,  youtube: 0.1,  ott: 0   } },
+  { min: 15000, fees: { email: 1500, content: 200, seo: 0    }, shares: { google: 0.7, fb: 0.15, youtube: 0.15, ott: 0   } },
+  { min: 21000, fees: { email: 1500, content: 200, seo: 3000 }, shares: { google: 0.7, fb: 0.1,  youtube: 0.1,  ott: 0.1 } },
+  { min: 50000, fees: { email: 1500, content: 200, seo: 5000 }, shares: { google: 0.6, fb: 0.1,  youtube: 0.2,  ott: 0.1 } },
+];
 
-    if (evergreenValue < 3000) {
-      googleBudget = evergreenValue;
-    } else if (evergreenValue < 5250) {
-      googleBudget = evergreenValue - emailValue;
-    } else if (evergreenValue < 15000) {
-      googleBudget = 0.8 * (evergreenValue - (emailValue + contentValue));
-    } 
-    else if (evergreenValue < 21000) {
-      googleBudget = 0.7 * (evergreenValue - (emailValue + contentValue));
-    } 
-
-    else if (evergreenValue < 50000) {
-      googleBudget = 0.7 * (evergreenValue - (emailValue + contentValue + seoValue));
-    } 
-
-    else {
-      googleBudget = 0.6 * (evergreenValue - (emailValue + seoValue + contentValue));
-    }
-
-    totalGoogleBudget += googleBudget;
-
-    const googleId = `google-${["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"][index]}`;
-    document.getElementById(googleId).textContent = `$${formatNumberWithCommas(googleBudget)}`;
-  });
-
-  document.getElementById("google-total").textContent = `$${formatNumberWithCommas(totalGoogleBudget)}`;
+function tierFor(evergreenValue) {
+  return TIERS.filter((tier) => evergreenValue >= tier.min).pop();
 }
 
-function calculateFBBudget() {
-  const monthlyIds = [
-    "evergreen-jan", "evergreen-feb", "evergreen-mar", "evergreen-apr",
-    "evergreen-may", "evergreen-jun", "evergreen-jul", "evergreen-aug",
-    "evergreen-sep", "evergreen-oct", "evergreen-nov", "evergreen-dec"
-  ];
-
-  let totalFBBudget = 0;
-
-  monthlyIds.forEach((id, index) => {
-    const evergreenValue = parseNumber(document.getElementById(id).textContent);
-    const emailValue = parseNumber(document.getElementById(`email-${["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"][index]}`).textContent);
-    const contentValue = parseNumber(document.getElementById(`content-${["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"][index]}`).textContent);
-    const seoValue = parseNumber(document.getElementById(`seo-${["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"][index]}`).textContent);
-    let fbBudget = 0;
-
-    if (evergreenValue < 5250) {
-      fbBudget = 0;
-    } else if (evergreenValue < 15000) {
-      fbBudget = 0.1 * (evergreenValue - (emailValue + contentValue));
-    
-    } 
-    
-    else if (evergreenValue < 21000) {
-      fbBudget = 0.15 * (evergreenValue - (emailValue + contentValue));
-    }
-    
-    else {
-      fbBudget = 0.1 * (evergreenValue - (seoValue + emailValue + contentValue));
-    }
-
-    totalFBBudget += fbBudget;
-
-    const fbId = `fb-${["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"][index]}`;
-    document.getElementById(fbId).textContent = `$${formatNumberWithCommas(fbBudget)}`;
-  });
-
-  document.getElementById("fb-total").textContent = `$${formatNumberWithCommas(totalFBBudget)}`;
+function isTacticSelected(tactic) {
+  return document.getElementById(`use-${tactic}`).checked;
 }
 
-function calculateEmailBudget() {
-  const monthlyIds = [
-    "evergreen-jan", "evergreen-feb", "evergreen-mar", "evergreen-apr",
-    "evergreen-may", "evergreen-jun", "evergreen-jul", "evergreen-aug",
-    "evergreen-sep", "evergreen-oct", "evergreen-nov", "evergreen-dec"
-  ];
+// Splits each month's evergreen budget across the selected tactics using the tier rules.
+// An unselected fee tactic isn't charged, which leaves more for the media tactics. An
+// unselected media tactic's share goes to the selected media tactics in proportion to
+// their own shares. Anything no selected tactic can take is shown as Unallocated.
+function calculateChannelBudgets() {
+  const tactics = [...FEE_TACTICS, ...MEDIA_TACTICS, "unallocated"];
+  const totals = Object.fromEntries(tactics.map((tactic) => [tactic, 0]));
 
-  let totalEmailBudget = 0;
+  MONTHS.forEach((month) => {
+    const evergreenValue = parseNumber(document.getElementById(`evergreen-${month}`).textContent);
+    const tier = tierFor(evergreenValue);
+    const amounts = {};
 
-  monthlyIds.forEach((id, index) => {
-    const evergreenValue = parseNumber(document.getElementById(id).textContent);
-    let emailBudget = 0;
+    FEE_TACTICS.forEach((tactic) => {
+      amounts[tactic] = isTacticSelected(tactic) ? tier.fees[tactic] : 0;
+    });
+    const remaining = evergreenValue - (amounts.email + amounts.content + amounts.seo);
 
-    if (evergreenValue < 3000) {
-      emailBudget = 0;
-    } else if (evergreenValue < 5250) {
-      emailBudget = 250;
-    } else if (evergreenValue < 15000) {
-      emailBudget = 600;
-    } else {
-      emailBudget = 1500;
-    }
+    const tierShareTotal = MEDIA_TACTICS.reduce((sum, tactic) => sum + tier.shares[tactic], 0);
+    const selectedShareTotal = MEDIA_TACTICS
+      .filter(isTacticSelected)
+      .reduce((sum, tactic) => sum + tier.shares[tactic], 0);
+    // Only rescale when a funded tactic is unselected, so the default split matches the tier exactly
+    const scale = selectedShareTotal === tierShareTotal ? 1 : 1 / selectedShareTotal;
 
-    totalEmailBudget += emailBudget;
+    MEDIA_TACTICS.forEach((tactic) => {
+      amounts[tactic] = isTacticSelected(tactic) && selectedShareTotal > 0
+        ? tier.shares[tactic] * scale * remaining
+        : 0;
+    });
+    amounts.unallocated = selectedShareTotal > 0 ? 0 : remaining;
 
-    // Update the respective month cell
-    const emailId = `email-${["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"][index]}`;
-    document.getElementById(emailId).textContent = `$${formatNumberWithCommas(emailBudget)}`;
+    tactics.forEach((tactic) => {
+      totals[tactic] += amounts[tactic];
+      document.getElementById(`${tactic}-${month}`).textContent = `$${formatNumberWithCommas(amounts[tactic])}`;
+    });
   });
 
-  document.getElementById("email-total").textContent = `$${formatNumberWithCommas(totalEmailBudget)}`;
-}
-
-
-function calculateContentBundleBudget() {
-  const monthlyIds = [
-    "evergreen-jan", "evergreen-feb", "evergreen-mar", "evergreen-apr",
-    "evergreen-may", "evergreen-jun", "evergreen-jul", "evergreen-aug",
-    "evergreen-sep", "evergreen-oct", "evergreen-nov", "evergreen-dec"
-  ];
-
-  let totalContentBudget = 0;
-
-  monthlyIds.forEach((id, index) => {
-    const evergreenValue = parseNumber(document.getElementById(id).textContent);
-    let contentBudget = 0;
-
-    if (evergreenValue >= 5250) {
-      contentBudget = 200;
-    }
-
-    totalContentBudget += contentBudget;
-
-    const contentId = `content-${["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"][index]}`;
-    document.getElementById(contentId).textContent = `$${formatNumberWithCommas(contentBudget)}`;
+  tactics.forEach((tactic) => {
+    document.getElementById(`${tactic}-total`).textContent = `$${formatNumberWithCommas(totals[tactic])}`;
   });
 
-  document.getElementById("content-total").textContent = `$${formatNumberWithCommas(totalContentBudget)}`;
-}
-
-
-function calculateSEOBudget() {
-  const monthlyIds = [
-    "evergreen-jan", "evergreen-feb", "evergreen-mar", "evergreen-apr",
-    "evergreen-may", "evergreen-jun", "evergreen-jul", "evergreen-aug",
-    "evergreen-sep", "evergreen-oct", "evergreen-nov", "evergreen-dec"
-  ];
-
-  let totalSEOBudget = 0;
-
-  monthlyIds.forEach((id, index) => {
-    const evergreenValue = parseNumber(document.getElementById(id).textContent);
-    let seoBudget = 0;
-
-    if (evergreenValue >= 21000 && evergreenValue < 50000) {
-      seoBudget = 3000;
-    } else if (evergreenValue >= 50000) {
-      seoBudget = 5000;
-    }
-
-    totalSEOBudget += seoBudget;
-
-    const seoId = `seo-${["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"][index]}`;
-    document.getElementById(seoId).textContent = `$${formatNumberWithCommas(seoBudget)}`;
+  [...FEE_TACTICS, ...MEDIA_TACTICS].forEach((tactic) => {
+    document.getElementById(`use-${tactic}`).closest("tr").classList.toggle("is-off", !isTacticSelected(tactic));
   });
-
-  document.getElementById("seo-total").textContent = `$${formatNumberWithCommas(totalSEOBudget)}`;
-}
-
-function calculateYouTubeBudget() {
-  const monthlyIds = [
-    "evergreen-jan", "evergreen-feb", "evergreen-mar", "evergreen-apr",
-    "evergreen-may", "evergreen-jun", "evergreen-jul", "evergreen-aug",
-    "evergreen-sep", "evergreen-oct", "evergreen-nov", "evergreen-dec"
-  ];
-
-  let totalYouTubeBudget = 0;
-
-  monthlyIds.forEach((id, index) => {
-    const evergreenValue = parseNumber(document.getElementById(id).textContent);
-    const emailValue = parseNumber(document.getElementById(`email-${["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"][index]}`).textContent);
-    const contentValue = parseNumber(document.getElementById(`content-${["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"][index]}`).textContent);
-    const seoValue = parseNumber(document.getElementById(`seo-${["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"][index]}`).textContent);
-    let ytBudget = 0;
-
-    if (evergreenValue < 5250) {
-      ytBudget = 0;
-    } else if (evergreenValue < 15000) {
-      ytBudget = 0.1 * (evergreenValue - (emailValue + contentValue));
-    
-    } 
-    
-    else if (evergreenValue < 21000) {
-      ytBudget = 0.15 * (evergreenValue - (emailValue + contentValue));
-    }
-    else if (evergreenValue < 50000) {
-      ytBudget = 0.1 * (evergreenValue - (emailValue + contentValue + seoValue));
-    }
-    
-    else {
-      ytBudget = 0.2 * (evergreenValue - (seoValue + emailValue + contentValue));
-    }
-
-    totalYouTubeBudget += ytBudget;
-
-    const ytId = `youtube-${["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"][index]}`;
-    document.getElementById(ytId).textContent = `$${formatNumberWithCommas(ytBudget)}`;
-  });
-
-  document.getElementById("youtube-total").textContent = `$${formatNumberWithCommas(totalYouTubeBudget)}`;
-}
-
-function calculateOTTBudget() {
-  const monthlyIds = [
-    "evergreen-jan", "evergreen-feb", "evergreen-mar", "evergreen-apr",
-    "evergreen-may", "evergreen-jun", "evergreen-jul", "evergreen-aug",
-    "evergreen-sep", "evergreen-oct", "evergreen-nov", "evergreen-dec"
-  ];
-
-  let totalOTTBudget = 0;
-
-  monthlyIds.forEach((id, index) => {
-    const evergreenValue = parseNumber(document.getElementById(id).textContent);
-    const emailValue = parseNumber(document.getElementById(`email-${["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"][index]}`).textContent);
-    const contentValue = parseNumber(document.getElementById(`content-${["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"][index]}`).textContent);
-    const seoValue = parseNumber(document.getElementById(`seo-${["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"][index]}`).textContent);
-
-    let ottBudget = 0;
-
-    if (evergreenValue < 21000) {
-      ottBudget = 0;
-    } else {
-      ottBudget = 0.1 * (evergreenValue - (emailValue + contentValue + seoValue));
-    }
-
-    totalOTTBudget += ottBudget;
-
-    const ottId = `ott-${["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"][index]}`;
-    document.getElementById(ottId).textContent = `$${formatNumberWithCommas(ottBudget)}`;
-  });
-
-  document.getElementById("ott-total").textContent = `$${formatNumberWithCommas(totalOTTBudget)}`;
+  document.getElementById("unallocated-row").hidden = totals.unallocated === 0;
 }
 
 function calculatePromoBudget() {
@@ -423,7 +242,7 @@ function calculatePromoBudget() {
 }
 
 function calculateBudgetPercentages() {
-  const services = ["email", "content", "seo", "google", "fb", "youtube", "ott"];
+  const services = [...FEE_TACTICS, ...MEDIA_TACTICS, "unallocated"];
   const evergreenValue = parseNumber(document.getElementById("evergreen-total").textContent);
 
   services.forEach(service => {
@@ -433,30 +252,15 @@ function calculateBudgetPercentages() {
   });
 }
 
-// Integrate E-Mail/Blog/Social Calculation into Existing Workflow
-updateMonthlyBudget = (function (originalFunction) {
-  return function () {
-    originalFunction();
-    calculateEvergreenBudget();
-    calculateEmailBudget();
-    calculateContentBundleBudget();
-    calculateSEOBudget();
-    calculateGoogleBudget();
-    calculateFBBudget();
-    calculateYouTubeBudget()
-    calculateOTTBudget();
-    calculateBudgetPercentages();
-    calculatePromoBudget();
-  };
-})(updateMonthlyBudget);
-
-
 document
   .getElementById("retailRevenue")
   .addEventListener("blur", () => formatInputField("retailRevenue"));
 document
   .getElementById("actAnnualBudget")
   .addEventListener("blur", () => formatInputField("actAnnualBudget"));
+document
+  .querySelectorAll(".tactic-toggle")
+  .forEach((checkbox) => checkbox.addEventListener("change", updateMonthlyBudget));
 
 // Fill every cell with formatted zeros on load
 calculateBudget();

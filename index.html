@@ -152,9 +152,14 @@
         </tr>
         </tbody>
         <tbody class="channels">
-        <tr class="group-label"><th scope="rowgroup" colspan="15">Evergreen by channel</th></tr>
+        <tr class="group-label"><th scope="rowgroup" colspan="15">Evergreen by channel <span class="group-hint">Uncheck a tactic to leave it out. Its share goes to the checked tactics.</span></th></tr>
         <tr class="row-channel">
-          <th scope="row">Email</th>
+          <th scope="row">
+            <label class="tactic">
+              <input type="checkbox" class="tactic-toggle" id="use-email" checked />
+              <span>Email</span>
+            </label>
+          </th>
           <td class="share" id="email-percentage"></td>
           <td id="email-jan">$0</td>
           <td id="email-feb">$0</td>
@@ -171,7 +176,12 @@
           <td class="total" id="email-total">$0</td>
         </tr>
         <tr class="row-channel">
-          <th scope="row">Content Bundle</th>
+          <th scope="row">
+            <label class="tactic">
+              <input type="checkbox" class="tactic-toggle" id="use-content" checked />
+              <span>Content Bundle</span>
+            </label>
+          </th>
           <td class="share" id="content-percentage"></td>
           <td id="content-jan">$0</td>
           <td id="content-feb">$0</td>
@@ -188,7 +198,12 @@
           <td class="total" id="content-total">$0</td>
         </tr>
         <tr class="row-channel">
-          <th scope="row">SEO</th>
+          <th scope="row">
+            <label class="tactic">
+              <input type="checkbox" class="tactic-toggle" id="use-seo" checked />
+              <span>SEO</span>
+            </label>
+          </th>
           <td class="share" id="seo-percentage"></td>
           <td id="seo-jan">$0</td>
           <td id="seo-feb">$0</td>
@@ -205,7 +220,12 @@
           <td class="total" id="seo-total">$0</td>
         </tr>
         <tr class="row-channel">
-          <th scope="row">Google</th>
+          <th scope="row">
+            <label class="tactic">
+              <input type="checkbox" class="tactic-toggle" id="use-google" checked />
+              <span>Google</span>
+            </label>
+          </th>
           <td class="share" id="google-percentage"></td>
           <td id="google-jan">$0</td>
           <td id="google-feb">$0</td>
@@ -222,7 +242,12 @@
           <td class="total" id="google-total">$0</td>
         </tr>
         <tr class="row-channel">
-          <th scope="row">FB/IG</th>
+          <th scope="row">
+            <label class="tactic">
+              <input type="checkbox" class="tactic-toggle" id="use-fb" checked />
+              <span>FB/IG</span>
+            </label>
+          </th>
           <td class="share" id="fb-percentage"></td>
           <td id="fb-jan">$0</td>
           <td id="fb-feb">$0</td>
@@ -239,7 +264,12 @@
           <td class="total" id="fb-total">$0</td>
         </tr>
         <tr class="row-channel">
-          <th scope="row">YouTube</th>
+          <th scope="row">
+            <label class="tactic">
+              <input type="checkbox" class="tactic-toggle" id="use-youtube" checked />
+              <span>YouTube</span>
+            </label>
+          </th>
           <td class="share" id="youtube-percentage"></td>
           <td id="youtube-jan">$0</td>
           <td id="youtube-feb">$0</td>
@@ -256,7 +286,12 @@
           <td class="total" id="youtube-total">$0</td>
         </tr>
         <tr class="row-channel">
-          <th scope="row">OTT</th>
+          <th scope="row">
+            <label class="tactic">
+              <input type="checkbox" class="tactic-toggle" id="use-ott" checked />
+              <span>OTT</span>
+            </label>
+          </th>
           <td class="share" id="ott-percentage"></td>
           <td id="ott-jan">$0</td>
           <td id="ott-feb">$0</td>
@@ -271,6 +306,23 @@
           <td id="ott-nov">$0</td>
           <td id="ott-dec">$0</td>
           <td class="total" id="ott-total">$0</td>
+        </tr>
+        <tr class="row-unallocated" id="unallocated-row" hidden>
+          <th scope="row" title="Budget no checked tactic can take at this tier">Unallocated</th>
+          <td class="share" id="unallocated-percentage"></td>
+          <td id="unallocated-jan">$0</td>
+          <td id="unallocated-feb">$0</td>
+          <td id="unallocated-mar">$0</td>
+          <td id="unallocated-apr">$0</td>
+          <td id="unallocated-may">$0</td>
+          <td id="unallocated-jun">$0</td>
+          <td id="unallocated-jul">$0</td>
+          <td id="unallocated-aug">$0</td>
+          <td id="unallocated-sep">$0</td>
+          <td id="unallocated-oct">$0</td>
+          <td id="unallocated-nov">$0</td>
+          <td id="unallocated-dec">$0</td>
+          <td class="total" id="unallocated-total">$0</td>
         </tr>
         </tbody>
       </table>
