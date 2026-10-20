@@ -127,13 +127,17 @@ const FEE_TACTICS = ["email", "content", "seo"];
 const MEDIA_TACTICS = ["google", "fb", "youtube", "ott"];
 
 // Evergreen tiers, lowest first. A month uses the last tier whose `min` its evergreen budget reaches.
+// The SEO fee includes AIRank: Local ($500) from $3,500 evergreen, Pro ($1,000) from $7,000.
+// From $21,000 Pro is added to the $3,000 SEO package; the $5,000 package already includes it.
 const TIERS = [
-  { min: 0,     fees: { email: 0,    content: 0,   seo: 0    }, shares: { google: 1,   fb: 0,    youtube: 0,    ott: 0   } },
-  { min: 3000,  fees: { email: 250,  content: 0,   seo: 0    }, shares: { google: 1,   fb: 0,    youtube: 0,    ott: 0   } },
-  { min: 5250,  fees: { email: 600,  content: 200, seo: 0    }, shares: { google: 0.8, fb: 0.1,  youtube: 0.1,  ott: 0   } },
-  { min: 15000, fees: { email: 1500, content: 200, seo: 0    }, shares: { google: 0.7, fb: 0.15, youtube: 0.15, ott: 0   } },
-  { min: 21000, fees: { email: 1500, content: 200, seo: 3000 }, shares: { google: 0.7, fb: 0.1,  youtube: 0.1,  ott: 0.1 } },
-  { min: 50000, fees: { email: 1500, content: 200, seo: 5000 }, shares: { google: 0.6, fb: 0.1,  youtube: 0.2,  ott: 0.1 } },
+  { min: 0,     fees: { email: 0,    content: 0,   seo: 0    }, shares: { google: 1,   fb: 0,    youtube: 0,    ott: 0   }, seoPackage: "" },
+  { min: 3000,  fees: { email: 250,  content: 0,   seo: 0    }, shares: { google: 1,   fb: 0,    youtube: 0,    ott: 0   }, seoPackage: "" },
+  { min: 3500,  fees: { email: 250,  content: 0,   seo: 500  }, shares: { google: 1,   fb: 0,    youtube: 0,    ott: 0   }, seoPackage: "AIRank - Local" },
+  { min: 5250,  fees: { email: 600,  content: 200, seo: 500  }, shares: { google: 0.8, fb: 0.1,  youtube: 0.1,  ott: 0   }, seoPackage: "AIRank - Local" },
+  { min: 7000,  fees: { email: 600,  content: 200, seo: 1000 }, shares: { google: 0.8, fb: 0.1,  youtube: 0.1,  ott: 0   }, seoPackage: "AIRank - Pro" },
+  { min: 15000, fees: { email: 1500, content: 200, seo: 1000 }, shares: { google: 0.7, fb: 0.15, youtube: 0.15, ott: 0   }, seoPackage: "AIRank - Pro" },
+  { min: 21000, fees: { email: 1500, content: 200, seo: 4000 }, shares: { google: 0.7, fb: 0.1,  youtube: 0.1,  ott: 0.1 }, seoPackage: "$3,000 SEO + AIRank - Pro" },
+  { min: 50000, fees: { email: 1500, content: 200, seo: 5000 }, shares: { google: 0.6, fb: 0.1,  youtube: 0.2,  ott: 0.1 }, seoPackage: "SEO incl. AIRank - Pro" },
 ];
 
 function tierFor(evergreenValue) {
@@ -190,6 +194,10 @@ function calculateChannelBudgets() {
     document.getElementById(`use-${tactic}`).closest("tr").classList.toggle("is-off", !isTacticSelected(tactic));
   });
   document.getElementById("unallocated-row").hidden = totals.unallocated === 0;
+
+  // Evergreen is the same every month, so January's tier names the SEO package for the year
+  const evergreenJan = parseNumber(document.getElementById("evergreen-jan").textContent);
+  document.getElementById("seo-package").textContent = tierFor(evergreenJan).seoPackage;
 }
 
 function calculatePromoBudget() {
