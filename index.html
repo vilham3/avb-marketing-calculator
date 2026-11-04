@@ -10,6 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mulish:wght@400;600;700;800&display=swap">
   <link rel="stylesheet" href="styles.css" />
+  <script src="./roi.js" defer></script>
   <script src="./helpers.js" defer></script>
 </head>
 
@@ -42,7 +43,12 @@
       <div class="field-card highlight-card">
         <span class="field-label">Rec Annual Budget</span>
         <output class="big-number" id="recAnnualBudget">$0</output>
-        <p class="field-hint">3% of retail revenue</p>
+        <p class="field-hint">
+          <span class="inline-pct">
+            <input type="text" id="marketingPct" value="3" inputmode="decimal" autocomplete="off" aria-label="Marketing percent of retail revenue" oninput="calculateBudget()" /><span aria-hidden="true">%</span>
+          </span>
+          of retail revenue
+        </p>
       </div>
 
       <div class="field-card">
@@ -52,6 +58,101 @@
           <input type="text" id="actAnnualBudget" inputmode="decimal" placeholder="0.00" autocomplete="off" oninput="updateMonthlyBudget()" />
         </div>
         <p class="field-hint">Leave blank to use the recommended budget</p>
+      </div>
+    </section>
+
+    <section class="roi-card" aria-labelledby="roi-title">
+      <div class="card-header">
+        <h2 id="roi-title">Growth &amp; ROI</h2>
+        <p class="card-subtitle">Ballpark math: store visits × close rate × average ticket × gross margin. Every added visit is assumed to cost the average, so treat the results as a starting point, not a promise.</p>
+      </div>
+      <div class="roi-body">
+        <div class="roi-inputs">
+          <div class="roi-field">
+            <label class="field-label" for="roiCategory">Main category</label>
+            <select id="roiCategory" class="text-input select-input"></select>
+            <p class="field-hint">Fills in average ticket and gross margin</p>
+          </div>
+
+          <div class="roi-field">
+            <label class="field-label" for="averageTicket">Average ticket</label>
+            <div class="money-input">
+              <span class="prefix" aria-hidden="true">$</span>
+              <input type="text" id="averageTicket" class="roi-input" inputmode="decimal" autocomplete="off" />
+            </div>
+            <p class="field-hint">Online whole-order AOV, last 12 months</p>
+          </div>
+
+          <div class="roi-field">
+            <label class="field-label" for="grossMargin">Gross margin</label>
+            <div class="money-input">
+              <input type="text" id="grossMargin" class="roi-input" inputmode="decimal" autocomplete="off" />
+              <span class="suffix" aria-hidden="true">%</span>
+            </div>
+            <p class="field-hint">POS sample, low confidence. Use theirs if known.</p>
+          </div>
+
+          <div class="roi-field">
+            <label class="field-label" for="closeRate">Close rate</label>
+            <div class="money-input">
+              <input type="text" id="closeRate" class="roi-input" inputmode="decimal" autocomplete="off" />
+              <span class="suffix" aria-hidden="true">%</span>
+            </div>
+            <p class="field-hint" id="closeRateHint">Share of store visitors who buy</p>
+          </div>
+
+          <div class="roi-field">
+            <label class="field-label" for="annualTraffic">Annual store traffic</label>
+            <input type="text" id="annualTraffic" class="text-input roi-input" inputmode="numeric" autocomplete="off" placeholder="Optional" />
+            <p class="field-hint">Door count, all locations. Sets the close rate.</p>
+          </div>
+
+          <div class="roi-field">
+            <label class="field-label" for="costPerVisit">Cost per store visit</label>
+            <div class="money-input">
+              <span class="prefix" aria-hidden="true">$</span>
+              <input type="text" id="costPerVisit" class="roi-input" inputmode="decimal" autocomplete="off" />
+            </div>
+            <p class="field-hint">AVB average: Google Ads spend ÷ store visits, last 12 months</p>
+          </div>
+
+          <div class="roi-field">
+            <label class="field-label" for="growthGoal">Sales growth goal</label>
+            <div class="money-input">
+              <input type="text" id="growthGoal" class="roi-input" inputmode="decimal" autocomplete="off" />
+              <span class="suffix" aria-hidden="true">%</span>
+            </div>
+            <p class="field-hint">Growth over this year's retail revenue</p>
+          </div>
+        </div>
+
+        <div class="roi-results">
+          <div class="result-panel">
+            <h3>What the current budget buys</h3>
+            <dl class="result-list">
+              <div><dt>Annual budget</dt><dd><span id="roi-budget">—</span><small class="result-note" id="roi-budget-note"></small></dd></div>
+              <div><dt>Fixed fees <small class="result-note">Email, Content, SEO</small></dt><dd id="roi-fixed">—</dd></div>
+              <div><dt>Media spend <small class="result-note">Paid tactics and promos</small></dt><dd id="roi-variable">—</dd></div>
+              <div><dt>Store visits from media</dt><dd id="roi-visits">—</dd></div>
+              <div><dt>Sales from those visits</dt><dd><span id="roi-sales-dollars">—</span><small class="result-note" id="roi-sales"></small></dd></div>
+              <div class="headline"><dt>Gross profit</dt><dd id="roi-gp">—</dd></div>
+              <div><dt>Gross profit per $1 of budget</dt><dd id="roi-gp-per-dollar">—</dd></div>
+              <div id="roi-traffic-row" hidden><dt>Budget per store visitor <small class="result-note">All door traffic, as on the tracking worksheet</small></dt><dd id="roi-cost-per-traffic">—</dd></div>
+            </dl>
+          </div>
+
+          <div class="result-panel goal-panel">
+            <h3>To grow sales <span id="goal-label">—</span></h3>
+            <dl class="result-list">
+              <div><dt>Added sales</dt><dd><span id="goal-sales-dollars">—</span><small class="result-note" id="goal-sales"></small></dd></div>
+              <div><dt>Added store visits needed</dt><dd id="goal-visits">—</dd></div>
+              <div><dt>Added media spend</dt><dd id="goal-spend">—</dd></div>
+              <div class="headline"><dt>New annual budget</dt><dd><span id="goal-budget">—</span><small class="result-note" id="goal-budget-note"></small></dd></div>
+              <div class="headline"><dt>Added gross profit</dt><dd id="goal-gp">—</dd></div>
+              <div><dt>Gross profit per $1 added</dt><dd id="goal-gp-per-dollar">—</dd></div>
+            </dl>
+          </div>
+        </div>
       </div>
     </section>
 

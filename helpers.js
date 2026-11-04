@@ -20,15 +20,10 @@ function formatInputField(fieldId) {
 
 function calculateBudget() {
   const retailRevenue = parseNumber(document.getElementById("retailRevenue").value);
-  console.log(retailRevenue)
-  // const categoryRevenue1 = parseNumber(document.getElementById("categoryRevenue1").value) / 100;
-  // const categoryRevenue2 = parseNumber(document.getElementById("categoryRevenue2").value) / 100;
+  // Marketing percent of revenue, editable on the page (3% by default)
+  const marketingShare = parseNumber(document.getElementById("marketingPct").value) / 100;
 
-  // Marketing percentage is now fixed at 3%
-  const mrktgRevenue = 3 / 100;
-
-  const recAnnualBudget = retailRevenue * mrktgRevenue;
-  // const budget2 = retailRevenue * categoryRevenue2 * mrktgRevenue2;
+  const recAnnualBudget = retailRevenue * marketingShare;
 
   document.getElementById("recAnnualBudget").textContent = `$${formatNumberWithCommas(recAnnualBudget)}`;
   document.getElementById("actAnnualBudget").placeholder = formatNumberWithCommas(recAnnualBudget);
@@ -37,20 +32,17 @@ function calculateBudget() {
 }
 
 
-function updateMonthlyBudget() {
-  // Get the Act Annual Budget value from the input or placeholder
-  const actAnnualBudget = parseNumber(
-    document.getElementById("actAnnualBudget").value ||
-    document.getElementById("actAnnualBudget").placeholder
-  );
+// The Act Annual Budget, or the recommended budget (its placeholder) when it's blank
+function currentAnnualBudget() {
+  const input = document.getElementById("actAnnualBudget");
+  return parseNumber(input.value || input.placeholder);
+}
 
-  // Monthly percentages for each month
-  const monthlyPercentages = [
-    0.07, 0.08, 0.07, 0.07, 0.09, 0.09, 0.1, 0.085, 0.085, 0.07, 0.12, 0.07,
-  ];
+function updateMonthlyBudget() {
+  const actAnnualBudget = currentAnnualBudget();
   let totalBudget = 0;
 
-  monthlyPercentages.forEach((percentage, index) => {
+  MONTHLY_SHARES.forEach((percentage, index) => {
     const monthlyBudget = actAnnualBudget * percentage;
     totalBudget += monthlyBudget;
 
@@ -82,6 +74,7 @@ function updateMonthlyBudget() {
   calculateChannelBudgets();
   calculateBudgetPercentages();
   calculatePromoBudget();
+  updateRoi();
 }
 
 function calculateEvergreenBudget() {
@@ -120,6 +113,8 @@ function calculateEvergreenBudget() {
 }
 
 const MONTHS = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+// Share of the annual budget spent in each month, January first
+const MONTHLY_SHARES = [0.07, 0.08, 0.07, 0.07, 0.09, 0.09, 0.1, 0.085, 0.085, 0.07, 0.12, 0.07];
 
 // Tactics paid as a flat monthly fee, taken off the top of the evergreen budget
 const FEE_TACTICS = ["email", "content", "seo"];
@@ -146,6 +141,14 @@ function tierFor(evergreenValue) {
 
 function isTacticSelected(tactic) {
   return document.getElementById(`use-${tactic}`).checked;
+}
+
+// Annual flat fees (Email, Content Bundle, SEO) that an annual budget carries, using the same
+// rules as calculateChannelBudgets: evergreen is the smallest month, and its tier sets the fees.
+function annualFixedFees(annualBudget) {
+  const evergreen = Math.round(annualBudget * Math.min(...MONTHLY_SHARES) * 100) / 100;
+  const tier = tierFor(evergreen);
+  return 12 * FEE_TACTICS.filter(isTacticSelected).reduce((sum, tactic) => sum + tier.fees[tactic], 0);
 }
 
 // Splits each month's evergreen budget across the selected tactics using the tier rules.
@@ -260,6 +263,112 @@ function calculateBudgetPercentages() {
   });
 }
 
+// ---------- Growth & ROI ----------
+
+const formatWholeDollars = (value) => `$${Math.round(value).toLocaleString()}`;
+const formatCount = (value) => Math.round(value).toLocaleString();
+const formatPercent = (share) => `${(share * 100).toFixed(1)}%`;
+
+function readPercent(id) {
+  return parseNumber(document.getElementById(id).value) / 100;
+}
+
+function setText(id, text) {
+  document.getElementById(id).textContent = text;
+}
+
+function fillRoiDefaults() {
+  const select = document.getElementById("roiCategory");
+  Object.entries(ROI_CATEGORIES).forEach(([key, category]) => select.add(new Option(category.label, key)));
+  select.value = ROI_DEFAULTS.category;
+  document.getElementById("costPerVisit").value = formatNumberWithCommas(ROI_DEFAULTS.costPerVisit);
+  document.getElementById("closeRate").value = (ROI_DEFAULTS.closeRate * 100).toFixed(1);
+  document.getElementById("growthGoal").value = (ROI_DEFAULTS.growthGoal * 100).toFixed(0);
+  applyCategoryDefaults();
+}
+
+function applyCategoryDefaults() {
+  const category = ROI_CATEGORIES[document.getElementById("roiCategory").value];
+  document.getElementById("averageTicket").value = formatNumberWithCommas(category.averageTicket);
+  document.getElementById("grossMargin").value = (category.grossMargin * 100).toFixed(1);
+}
+
+// With a door count, the close rate is calculated and locked; clearing the count restores
+// whatever close rate was typed before.
+function syncCloseRate(revenue, averageTicket) {
+  const input = document.getElementById("closeRate");
+  const trafficRate = closeRateFromTraffic(revenue, averageTicket, parseNumber(document.getElementById("annualTraffic").value));
+  if (trafficRate !== null) {
+    if (!input.disabled) input.dataset.typed = input.value;
+    input.disabled = true;
+    input.value = (trafficRate * 100).toFixed(1);
+    setText("closeRateHint", "Calculated: sales (revenue ÷ ticket) ÷ traffic");
+  } else if (input.disabled) {
+    input.disabled = false;
+    input.value = input.dataset.typed || "";
+    setText("closeRateHint", "Share of store visitors who buy");
+  }
+}
+
+function updateRoi() {
+  const revenue = parseNumber(document.getElementById("retailRevenue").value);
+  const budget = currentAnnualBudget();
+  const averageTicket = parseNumber(document.getElementById("averageTicket").value);
+  syncCloseRate(revenue, averageTicket);
+
+  const inputs = {
+    averageTicket,
+    closeRate: readPercent("closeRate"),
+    grossMargin: readPercent("grossMargin"),
+    costPerVisit: parseNumber(document.getElementById("costPerVisit").value),
+  };
+  const growthGoal = readPercent("growthGoal");
+  const traffic = parseNumber(document.getElementById("annualTraffic").value);
+
+  // What the current budget buys
+  const fixedFees = annualFixedFees(budget);
+  const mediaSpend = budget - fixedFees;
+  const current = budget > 0 ? projectReturns({ spend: mediaSpend, ...inputs }) : null;
+
+  setText("roi-budget", budget > 0 ? formatWholeDollars(budget) : "—");
+  setText("roi-budget-note", budget > 0 && revenue > 0 ? `${formatPercent(budget / revenue)} of revenue` : "");
+  setText("roi-fixed", budget > 0 ? formatWholeDollars(fixedFees) : "—");
+  setText("roi-variable", budget > 0 ? formatWholeDollars(mediaSpend) : "—");
+  setText("roi-visits", current ? formatCount(current.visits) : "—");
+  setText("roi-sales-dollars", current ? formatWholeDollars(current.salesDollars) : "—");
+  setText("roi-sales", current ? `${formatCount(current.sales)} sales` : "");
+  setText("roi-gp", current ? formatWholeDollars(current.grossProfit) : "—");
+  setText("roi-gp-per-dollar", current && budget > 0 ? `$${(current.grossProfit / budget).toFixed(2)}` : "—");
+  document.getElementById("roi-traffic-row").hidden = !(traffic > 0 && budget > 0);
+  setText("roi-cost-per-traffic", traffic > 0 ? `$${(budget / traffic).toFixed(2)}` : "—");
+
+  // Working backwards from the growth goal
+  setText("goal-label", growthGoal > 0 ? `+${(growthGoal * 100).toLocaleString()}%` : "—");
+  const plan = planGrowth({ revenue, growthGoal, ...inputs });
+  if (!plan) {
+    ["goal-sales-dollars", "goal-visits", "goal-spend", "goal-budget", "goal-gp", "goal-gp-per-dollar"]
+      .forEach((id) => setText(id, "—"));
+    setText("goal-sales", "");
+    setText("goal-budget-note", "");
+    return;
+  }
+
+  const newBudget = budgetForVariableSpend(mediaSpend + plan.addedSpend, annualFixedFees);
+  const addedBudget = newBudget - budget;
+  const addedFees = annualFixedFees(newBudget) - fixedFees;
+  const budgetNote = [`+${formatWholeDollars(addedBudget)}`, `${formatPercent(newBudget / revenue)} of revenue`];
+  if (addedFees >= 1) budgetNote.push(`includes ${formatWholeDollars(addedFees)} more in fixed fees at the higher tier`);
+
+  setText("goal-sales-dollars", formatWholeDollars(plan.addedSalesDollars));
+  setText("goal-sales", `${formatCount(plan.addedSales)} more sales`);
+  setText("goal-visits", formatCount(plan.addedVisits));
+  setText("goal-spend", formatWholeDollars(plan.addedSpend));
+  setText("goal-budget", formatWholeDollars(newBudget));
+  setText("goal-budget-note", budgetNote.join(" · "));
+  setText("goal-gp", formatWholeDollars(plan.addedGrossProfit));
+  setText("goal-gp-per-dollar", addedBudget > 0 ? `$${(plan.addedGrossProfit / addedBudget).toFixed(2)}` : "—");
+}
+
 document
   .getElementById("retailRevenue")
   .addEventListener("blur", () => formatInputField("retailRevenue"));
@@ -269,6 +378,20 @@ document
 document
   .querySelectorAll(".tactic-toggle")
   .forEach((checkbox) => checkbox.addEventListener("change", updateMonthlyBudget));
+document
+  .querySelectorAll(".roi-input")
+  .forEach((input) => input.addEventListener("input", updateRoi));
+["averageTicket", "costPerVisit"].forEach((id) =>
+  document.getElementById(id).addEventListener("blur", () => formatInputField(id)));
+document.getElementById("annualTraffic").addEventListener("blur", () => {
+  const input = document.getElementById("annualTraffic");
+  if (input.value.trim() !== "") input.value = formatCount(parseNumber(input.value));
+});
+document.getElementById("roiCategory").addEventListener("change", () => {
+  applyCategoryDefaults();
+  updateRoi();
+});
 
-// Fill every cell with formatted zeros on load
+// Fill the ROI defaults, then every cell with formatted zeros on load
+fillRoiDefaults();
 calculateBudget();
