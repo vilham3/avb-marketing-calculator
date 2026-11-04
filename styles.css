@@ -191,14 +191,179 @@ body {
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 
+.suffix {
+  padding: 0 12px 0 2px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.money-input input:first-child {
+  padding-left: 12px;
+}
+
+.money-input:has(input:disabled) {
+  background-color: var(--surface-muted);
+  border-style: dashed;
+}
+
+.money-input input:disabled {
+  color: var(--accent);
+  -webkit-text-fill-color: var(--accent);
+  opacity: 1;
+}
+
+.select-input {
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* Editable marketing percent inside the Rec Annual Budget card */
+.inline-pct {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.inline-pct input {
+  width: 3.5em;
+  padding: 2px 6px;
+  font: inherit;
+  font-weight: 700;
+  color: var(--text);
+  text-align: right;
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 6px;
+  outline: none;
+}
+
+.inline-pct input:focus {
+  border-color: var(--brand-blue);
+  box-shadow: 0 0 0 3px rgba(0, 173, 204, 0.25);
+}
+
 input::placeholder {
   color: var(--text-muted);
   opacity: 0.7;
   font-weight: 600;
 }
 
+/* ---------- Growth & ROI ---------- */
+
+.roi-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+  gap: 24px;
+  padding: 20px;
+}
+
+.roi-inputs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  align-content: start;
+}
+
+.roi-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.roi-results {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  align-content: start;
+}
+
+.result-panel {
+  background-color: var(--surface-muted);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 18px;
+}
+
+.goal-panel {
+  background-color: var(--accent-soft);
+  border-color: transparent;
+  border-top: 4px solid var(--brand-blue);
+}
+
+.result-panel h3 {
+  margin: 0 0 12px;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+#goal-label {
+  color: var(--accent);
+}
+
+.result-list {
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.result-list > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed var(--border);
+}
+
+.result-list > div[hidden] {
+  display: none;
+}
+
+.result-list > div:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.result-list dt {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.result-list dd {
+  margin: 0;
+  font-weight: 800;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.result-list .headline dt {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.result-list .headline dd {
+  font-size: 22px;
+}
+
+.result-note {
+  display: block;
+  margin-top: 2px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.result-note:empty {
+  display: none;
+}
+
 /* ---------- Breakdown table ---------- */
 
+.roi-card,
 .breakdown-card {
   background-color: var(--surface);
   border: 1px solid var(--border);
@@ -447,6 +612,16 @@ input::placeholder {
   .budget-inputs {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .roi-body {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .roi-results {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 600px) {
@@ -472,6 +647,14 @@ input::placeholder {
   .budget-inputs {
     grid-template-columns: 1fr;
     gap: 12px;
+  }
+
+  .roi-body {
+    padding: 16px;
+  }
+
+  .roi-inputs {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -504,6 +687,7 @@ input::placeholder {
   }
 
   .field-card,
+  .roi-card,
   .breakdown-card {
     box-shadow: none;
   }
